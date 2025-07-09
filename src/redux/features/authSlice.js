@@ -25,7 +25,7 @@ export const authApi = baseApi.injectEndpoints({
 
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "/accounts/resend_otp/",
+        url: "/auth/send_otp/",
         method: "POST",
         body: data,
       }),

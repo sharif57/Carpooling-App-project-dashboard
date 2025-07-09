@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../redux/features/authSlice";
 import toast from "react-hot-toast";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -20,6 +21,7 @@ export default function SignIn() {
       const res = await login({ email, password }).unwrap();
       localStorage.setItem("accessToken", res?.access_token);
       toast.success("Login successful!");
+      navigate("/");
     } catch (error) {
       toast.error(
         error?.data?.message || "Login failed. Please check your credentials."
