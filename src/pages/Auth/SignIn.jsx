@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useLoginMutation } from "../../redux/features/authSlice";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -8,15 +10,20 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [login] = useLoginMutation();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Login attempt with:", { email, password, rememberMe });
+      const res = await login({ email, password }).unwrap();
+      localStorage.setItem("accessToken", res?.access_token);
+      toast.success("Login successful!");
     } catch (error) {
-      console.error("Login failed:", error);
+      toast.error(
+        error?.data?.message || "Login failed. Please check your credentials."
+      );
     } finally {
       setIsLoading(false);
     }
