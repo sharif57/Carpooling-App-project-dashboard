@@ -7,7 +7,6 @@ import TermsConditions from "../pages/Settings/TermsConditions";
 import EditTermsConditions from "../pages/Settings/EditTermsConditions";
 import PrivacyPolicy from "../pages/Settings/PrivacyPolicy";
 import EditPrivacyPolicy from "../pages/Settings/EditPrivacyPolicy";
-
 import { MdOutlineSecurityUpdateWarning } from "react-icons/md";
 import HostDetails from "../pages/Main/Host/HostDetails";
 import { FaServicestack } from "react-icons/fa6";
@@ -18,13 +17,11 @@ import ForgotPassword from "../pages/Main/Setting/Change-password/ForgotPassword
 import VerifyEmail from "../pages/Main/Setting/Change-password/VerifyEmail";
 import Trust from "../pages/Settings/Trust";
 import EditTrust from "../pages/Settings/EditTrust";
-import { TbCash } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import { BadgePoundSterling, ShoppingBag } from "lucide-react";
 import AddItem from "../pages/Main/Shop/AddItem";
 import TransactionHome from "../pages/Main/Transaction/TransactionHome";
 import User from "../pages/Main/Shop/User";
-import Subscription from "../pages/Main/Parties/Subscription";
 
 export const dashboardItems = [
   {
@@ -33,7 +30,7 @@ export const dashboardItems = [
     icon: RiDashboardHorizontalFill,
     element: <DashboardHome />,
   },
-    {
+  {
     name: "Earnings",
     path: "transaction",
     icon: BadgePoundSterling,
@@ -50,13 +47,12 @@ export const dashboardItems = [
     element: <AddItem />,
   },
 
-  {
-    name: "Subscription",
-    path: "subscription",
-    icon: TbCash,
-    element: <Subscription />,
-  },
-
+  // {
+  //   name: "Subscription",
+  //   path: "subscription",
+  //   icon: TbCash,
+  //   element: <Subscription />,
+  // },
 
   {
     name: "Setting",

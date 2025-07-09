@@ -4,14 +4,14 @@ export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     userProfile: builder.query({
       query: () => ({
-        url: "/accounts/get_user_profile/",
+        url: "/auth/user_profile/",
         method: "GET",
       }),
       providesTags: ["User"],
     }),
     userList: builder.query({
       query: () => ({
-        url: "/accounts/all_user_list/",
+        url: "/auth/user/",
         method: "GET",
       }),
       providesTags: ["User"],

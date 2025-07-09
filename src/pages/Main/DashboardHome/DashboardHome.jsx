@@ -1,6 +1,9 @@
 import DashboardHomeTable from "../../../Components/DashboardHomeTable";
+import { useUserListQuery } from "../../../redux/features/useSlice";
 
 const DashboardHome = () => {
+  const { data } = useUserListQuery();
+  console.log(data, "User List Data");
   return (
     <div className="space-y-[24px]">
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-x-10 lg:gap-x-10  gap-y-10 ">
@@ -27,7 +30,7 @@ const DashboardHome = () => {
           </div>
           <div className="text-center">
             <h3 className="text-[20px]">{"Total users"}</h3>
-            <h3 className=" text-[#494747] font-medium text-[48px]">400</h3>
+            <h3 className=" text-[#494747] font-medium text-[48px]">{data?.total}</h3>
           </div>
         </div>
 

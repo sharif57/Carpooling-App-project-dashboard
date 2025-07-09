@@ -1,23 +1,19 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Button, Form, Input } from "antd";
 import dashProfile from "../../assets/images/dashboard-profile.png";
 import { Outlet, useNavigate } from "react-router-dom";
-import PhoneCountryInput from "../../Components/PhoneCountryInput";
 import PasswordChangeModalForm from "../../Components/User/PasswordChangeModalForm";
 import { FaAngleLeft } from "react-icons/fa6";
 import { FaRegEdit } from "react-icons/fa";
-
+import { useUserProfileQuery } from "../../redux/features/useSlice";
 
 const MyProfile = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const profileData = {
-    name: "Jane Kooper",
-    email: "enrique@gmail.com",
-    phone: "+880 1550597212",
-    profile: dashProfile,
-  };
+  const { data } = useUserProfileQuery();
+  console.log("User Profile Data:", data);
+
   // console.log(code);
   return (
     <>
@@ -31,13 +27,11 @@ const MyProfile = () => {
         </h3>
         <div>
           <div className="space-y-[24px] min-h-[83vh] bg-light-gray rounded-2xl">
-
             <div className="w-full">
-
               <div className="py-4 px-8 flex justify-end items-center">
                 {/* <h6 className="text-2xl text-white">Personal Information</h6> */}
                 <Button
-                  onClick={(e) => navigate(`edit`)}
+                  onClick={() => navigate(`edit`)}
                   size="large"
                   type="default"
                   className="px-8 bg-black text-white hover:bg-black/90 rounded-full font-semibold"
@@ -53,8 +47,8 @@ const MyProfile = () => {
                 className="w-full grid grid-cols-12 gap-x-10 px-14 py-8"
                 autoComplete="off"
                 initialValues={{
-                  name: profileData.name,
-                  email: profileData.email,
+                  name: data?.full_name,
+                  email: data?.email || "enrique@gmail.com",
                 }}
               >
                 <div className="col-span-3 space-y-6 ">
@@ -67,14 +61,14 @@ const MyProfile = () => {
                       />
                     </div>
                     <h5 className="text-lg text-[#222222]">{"Profile"}</h5>
-                    <h4 className="text-2xl text-[#222222]">{"Admin"}</h4>
+                    <h4 className="text-2xl text-[#222222]">{`${data?.role}`}</h4>
                   </div>
-
                 </div>
                 <div className="col-span-9 space-y-[14px] w-full">
                   <Form.Item
                     className="text-lg  font-medium text-black -mb-1"
                     label="Name"
+                    initialValue={data?.full_name}
                     name="name"
                   >
                     <Input
@@ -100,7 +94,12 @@ const MyProfile = () => {
                     label="Phone Number"
                     name="phone"
                   >
-                    <PhoneCountryInput />
+                    <Input
+                      readOnly
+                      size="large"
+                      defaultValue={data?.contact_number}
+                      className="h-[53px] rounded-lg"
+                    />
                   </Form.Item>
                 </div>
               </Form>
@@ -108,7 +107,6 @@ const MyProfile = () => {
             <PasswordChangeModalForm
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
-
             />
           </div>
         </div>
@@ -116,7 +114,6 @@ const MyProfile = () => {
           <Outlet />
         </div>
       </div>
-
     </>
   );
 };

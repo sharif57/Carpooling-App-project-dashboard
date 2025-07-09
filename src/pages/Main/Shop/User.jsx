@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Table, Modal, Button } from "antd";
-import { Eye, Printer } from "lucide-react";
+import { Eye } from "lucide-react";
+import { useUserListQuery } from "../../../redux/features/useSlice";
 
 const User = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const { data: apiData, isLoading, isError } = useUserListQuery();
+  
+  console.log(apiData, "User List Data");
 
   const showModal = (data) => {
     setSelectedUser(data);
@@ -19,42 +23,43 @@ const User = () => {
   const columns = [
     {
       title: "#SI No.",
-      dataIndex: "transIs",
-      key: "transIs",
-      render: (text) => <a>{text}</a>,
+      dataIndex: "id",
+      key: "id",
+      render: (text, record, index) => index + 1,
     },
     {
       title: "User Name",
-      dataIndex: "name",
-      key: "name  ",
+      dataIndex: "full_name",
+      key: "full_name",
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "Subscription",
-      dataIndex: "Address",
-      key: "Address",
+      dataIndex: "subscription_plan",
+      key: "subscription_plan",
+      render: (text) => text || "N/A",
     },
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
+      title: "Plan Expiry Date",
+      dataIndex: "plan_expired_date",
+      key: "plan_expired_date",
+      render: (text) => text || "N/A",
     },
-
     {
       title: "Action",
-      key: "Action",
+      key: "action",
       align: "center",
-      render: (_, data) => (
+      render: (_, record) => (
         <Button
           type="link"
-          onClick={() => showModal(data)}
-          // className="flex items-center"
+          onClick={() => showModal(record)}
         >
-          {/* <img
-            src={exlamIcon}
-            alt="Review"
-            className="w-5 h-5 cursor-pointer"
-          /> */}
-          <div className="flex items-center gap-4 ">
+          <div className="flex items-center gap-4">
             <Eye />
           </div>
         </Button>
@@ -62,40 +67,36 @@ const User = () => {
     },
   ];
 
-  const data = Array.from({ length: 17 }, (_, index) => ({
-    transIs: `${index + 1}`,
-    name: "Henry",
-    Email: "sharif@gmail.com",
-    Address: "Standard",
-    transactionAmount: "$50",
-    date: "16 Apr 2024",
-    userId: `U-${index + 1}`,
-  }));
+  // Transform API data to match table structure
+  const tableData = apiData?.data?.map(user => ({
+    ...user,
+    key: user.id, // Add key for React
+    userId: `U-${user.id}`,
+  })) ;
 
   return (
     <div>
-      <div className="rounded-lg border py-4   mt-8 recent-users-table text-white bg-white">
-        {/* Ant Design Table */}
+      <div className="rounded-lg border py-4 mt-8 recent-users-table text-white bg-white">
         <h1 className="text-2xl font-semibold mb-4 text-black pl-4">User List</h1>
+        
+        {isLoading && <div>Loading...</div>}
+        {isError && <div>Error loading data</div>}
+        
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={tableData}
           pagination={{ position: ["bottomCenter"] }}
-          className="rounded-2xl  text-white"
-          rowKey="userId"
+          className="rounded-2xl text-white"
+          rowKey="id"
+          loading={isLoading}
         />
 
-        {/* Modal */}
         <Modal
           title={
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold text-center">
                 User Details
               </span>
-              {/* <CloseOutlined
-              className="text-lg cursor-pointer"
-              onClick={handleCancel}
-            /> */}
             </div>
           }
           open={isModalOpen}
@@ -104,28 +105,41 @@ const User = () => {
           className="custom-modal"
         >
           {selectedUser && (
-            <div className="flex flex-col gap-4  ">
-              {/* User Details */}
-              <div className="flex justify-between items-center ">
-                <span className=" font-medium">User ID:</span>
-                <span className="">{selectedUser.userId}</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">User ID:</span>
+                <span>{selectedUser.userId}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className=" font-medium">Date:</span>
-                <span className="">{selectedUser.date}</span>
+                <span className="font-medium">Name:</span>
+                <span>{selectedUser.full_name || "N/A"}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className=" font-medium">User Name:</span>
-                <span className="">{selectedUser.name}</span>
+                <span className="font-medium">Email:</span>
+                <span>{selectedUser.email}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className=" font-medium">Transaction Amount:</span>
-                <span className="">{selectedUser.transactionAmount}</span>
+                <span className="font-medium">Contact Number:</span>
+                <span>{selectedUser.contact_number || "N/A"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Subscription Plan:</span>
+                <span>{selectedUser.subscription_plan || "N/A"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Plan Expiry Date:</span>
+                <span>{selectedUser.plan_expired_date || "N/A"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Total Rides:</span>
+                <span>{selectedUser.total_rides}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Role:</span>
+                <span>{selectedUser.role}</span>
               </div>
 
-              {/* Download Button */}
               <Button
-                // type="primary"
                 className="bg-[#101010] py-6 text-white w-full hover:bg-gray-800"
               >
                 Download
