@@ -15,7 +15,7 @@ const {data} = useUserProfileQuery();
 
   return (
 
-    <div className="w-full h-[88px] text-white flex justify-between items-center rounded-lg py-[16px] px-[32px] shadow-lg bg-[#0743A2] border border">
+    <div className="w-full h-[88px] text-white flex justify-between items-center rounded-lg py-[16px] px-[32px] shadow-lg bg-[#0743A2] border ">
       <div className="text-start space-y-0.5">
         <p className="text-sm md:text-xl font-light">
           {`Welcome, ${data?.full_name}`}
