@@ -12,8 +12,10 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "@tabler/icons-react": "^3.11.0",
+    "@tailwindcss/typography": "^0.5.16",
     "antd": "^5.20.0",
     "clsx": "^2.1.1",
+    "dompurify": "^3.2.6",
     "file-saver": "^2.0.5",
     "heroicons": "^2.1.5",
     "jodit-react": "^4.1.2",

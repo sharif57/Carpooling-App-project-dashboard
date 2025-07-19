@@ -1,36 +1,37 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import Quill from "quill";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaAngleLeft } from "react-icons/fa6";
+import { usePrivacyPoliciesQuery, useUpdatePrivacyPolicyMutation } from "../../redux/features/privacySlice";
 
-// Import 'size' style attributor
+// Register custom font sizes
 const Size = Quill.import("attributors/style/size");
-Size.whitelist = ["14px", "16px", "18px"]; // Custom font sizes
+Size.whitelist = ["14px", "16px", "18px"];
 Quill.register(Size, true);
 
 const modules = {
   toolbar: {
     container: [
-      [{ size: ["14px", "16px", "18px"] }], // Use whitelisted sizes
-      [{ color: [] }], // Text color dropdown
-      ["bold", "italic", "underline", 'strike'], // Formatting options
+      [{ size: ["14px", "16px", "18px"] }],
+      [{ color: [] }],
+      ["bold", "italic", "underline", "strike"],
       [{ align: [] }],
       ["image", "link"],
-      [{ list: 'bullet' }],
+      [{ list: "bullet" }],
     ],
     handlers: {
       align: function (value) {
-        this.quill.format('align', value);
+        this.quill.format("align", value);
       },
     },
   },
 };
 
 const formats = [
-  "size", // Custom font sizes
+  "size",
   "color",
   "align",
   "bold",
@@ -43,59 +44,77 @@ const formats = [
 
 const EditPrivacyPolicy = () => {
   const navigate = useNavigate();
+  const { data, isLoading, isError, error } = usePrivacyPoliciesQuery(undefined);
+  const [updatePrivacyPolicy, { isLoading: isUpdating }] = useUpdatePrivacyPolicyMutation();
   const [content, setContent] = useState("");
-  const placeholder = "Enter your update privacy policy...";
-  console.log(content);
+
+  // Initialize content with fetched data
+  useEffect(() => {
+    if (data?.data?.length > 0 && data.data[0]?.content) {
+      setContent(data.data[0].content);
+    }
+  }, [data]);
+
+  const handleUpdate = async () => {
+    if (!data?.data?.length || !data.data[0]?.id) {
+      message.error("No privacy policy data available to update.");
+      return;
+    }
+
+    try {
+      await updatePrivacyPolicy({
+        id: data.data[0].id,
+        content,
+      }).unwrap();
+      message.success("Privacy policy updated successfully!");
+      navigate(-1); // Adjust the route as needed
+    } catch (err) {
+      message.error("Failed to update privacy policy. Please try again.");
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {error?.data?.message || "Failed to load privacy policy."}</div>;
+  }
+
+  if (!data?.data?.length) {
+    return <div>No privacy policy data available.</div>;
+  }
+
   return (
-    <>
-      <div className="flex items-center gap-2 text-xl">
-        <FaAngleLeft />
+    <div className="p-4">
+      <div className="flex items-center gap-2 text-xl mb-4">
+        <FaAngleLeft onClick={() => navigate(-1)} className="cursor-pointer" />
         <h1>Privacy & Policy</h1>
       </div>
-      <div className="rounded-lg py-4 border-lightGray border-2 shadow-lg mt-8 bg-white">
-        <div className="space-y-[24px] min-h-[83vh] bg-light-gray rounded-2xl">
-          <h3 className="text-2xl text-black mb-4 border-b-2 border-lightGray/40 pb-3 pl-16">
+      <div className="rounded-lg py-4 border border-gray-200 shadow-lg mt-8 bg-white">
+        <div className="space-y-6 min-h-[83vh] rounded-2xl">
+          <h3 className="text-2xl text-black mb-4 border-b-2 border-gray-200 pb-3 pl-16">
             Privacy & Policy Edit
           </h3>
           <div className="w-full px-16">
-            <div className="h-full border border-gray-400 rounded-md">
-              <div className="ql-toolbar-container h-56">
-                {/* <div id="toolbar">
-                     <span className="ql-formats">
-   
-                       <button className="ql-align" value="left">
-                         Left
-                       </button>
-                       <button className="ql-align" value="center">
-                         Center
-                       </button>
-                       <button className="ql-align" value="right">
-                         Right
-                       </button>
-                       <button className="ql-align" value="justify">
-                         Justify
-                       </button>
-                     </span>
-   
-                   </div> */}
-                <ReactQuill
-                  placeholder="Enter your update terms & conditions..."
-                  theme="snow"
-                  value={content}
-                  onChange={(value) => setContent(value)}
-                  modules={modules}
-                  formats={formats}
-                  className="custom-quill-editor"
-                />
-              </div>
+            <div className="border border-gray-400 rounded-md">
+              <ReactQuill
+                placeholder="Enter your privacy policy..."
+                theme="snow"
+                value={content}
+                onChange={setContent}
+                modules={modules}
+                formats={formats}
+                className="custom-quill-editor"
+              />
             </div>
-
           </div>
           <div className="flex justify-end pt-8 pr-16">
             <Button
-              onClick={(e) => navigate(`edit`)}
+              onClick={handleUpdate}
               size="large"
               type="primary"
+              loading={isUpdating}
               className="px-8 bg-black text-white hover:bg-black/90 rounded-full font-semibold w-1/4"
             >
               Update
@@ -103,7 +122,7 @@ const EditPrivacyPolicy = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
